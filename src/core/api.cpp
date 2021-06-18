@@ -83,6 +83,7 @@
 #include "materials/uber.h"
 #include "samplers/halton.h"
 #include "samplers/maxmin.h"
+#include "samplers/multijitter.h"
 #include "samplers/random.h"
 #include "samplers/sobol.h"
 #include "samplers/stratified.h"
@@ -167,7 +168,8 @@ struct RenderOptions {
     ParamSet FilterParams;
     std::string FilmName = "image";
     ParamSet FilmParams;
-    std::string SamplerName = "halton";
+    //std::string SamplerName = "halton"; // default sampler
+	  std::string SamplerName = "multijitter";
     ParamSet SamplerParams;
     std::string AcceleratorName = "bvh";
     ParamSet AcceleratorParams;
@@ -817,18 +819,20 @@ std::shared_ptr<Sampler> MakeSampler(const std::string &name,
                                      const ParamSet &paramSet,
                                      const Film *film) {
     Sampler *sampler = nullptr;
-    if (name == "lowdiscrepancy" || name == "02sequence")
-        sampler = CreateZeroTwoSequenceSampler(paramSet);
-    else if (name == "maxmindist")
-        sampler = CreateMaxMinDistSampler(paramSet);
-    else if (name == "halton")
-        sampler = CreateHaltonSampler(paramSet, film->GetSampleBounds());
-    else if (name == "sobol")
-        sampler = CreateSobolSampler(paramSet, film->GetSampleBounds());
-    else if (name == "random")
-        sampler = CreateRandomSampler(paramSet);
-    else if (name == "stratified")
-        sampler = CreateStratifiedSampler(paramSet);
+	if (name == "lowdiscrepancy" || name == "02sequence")
+		sampler = CreateZeroTwoSequenceSampler(paramSet);
+	else if (name == "maxmindist")
+		sampler = CreateMaxMinDistSampler(paramSet);
+	else if (name == "halton")
+		sampler = CreateHaltonSampler(paramSet, film->GetSampleBounds());
+	else if (name == "sobol")
+		sampler = CreateSobolSampler(paramSet, film->GetSampleBounds());
+	else if (name == "random")
+		sampler = CreateRandomSampler(paramSet);
+	else if (name == "stratified")
+		sampler = CreateStratifiedSampler(paramSet);
+	else if (name == "multijitter")
+		sampler = CreateMultiJitterSampler(paramSet);
     else
         Warning("Sampler \"%s\" unknown.", name.c_str());
     paramSet.ReportUnused();
