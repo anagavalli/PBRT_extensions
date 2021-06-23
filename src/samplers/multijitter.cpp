@@ -9,7 +9,7 @@ namespace pbrt {
   void MultiJitterSampler::StartPixel(const Point2i &p) {
     ProfilePhase _(Prof::StartPixel);
 
-    // Standard shuffling, generating jittered 1D arrays then shuffling them.
+    // Standard shuffling, generates jittered 1D arrays then shuffles them.
     for (size_t i = 0; i < samples1D.size(); ++i) {
       StratifiedSample1D(&samples1D[i][0], xPixelSamples * yPixelSamples, rng,
         jitterSamples);
@@ -24,6 +24,8 @@ namespace pbrt {
       }
 
     // Correlated multi jitter sampling
+    // For every requested 2D sample variable, use correlated multi jitter sampling
+    // to get good coverage over unit square with minimal clumping.
     for (size_t i = 0; i < samples2D.size(); ++i) {
       CorrelatedMultiJitter(
         &samples2D[i][0], 
@@ -32,10 +34,13 @@ namespace pbrt {
         xPixelSamples * yPixelSamples, 
         rng);
     }
+    // For every request array of 2D values, use correlated multi jitter sampling
+    // so that every sample array has good coverage over unit square with minimal clumping.
     for (size_t i = 0; i < samples2DArraySizes.size(); ++i)
       for (int64_t j = 0; j < samplesPerPixel; ++j) {
         int count = samples2DArraySizes[i];
 
+        // Find reasonable n and m such that n*m >= count, for the purposes of creating strata.
         std::vector<int> sizes = DecomposeCount(count);
 
         CorrelatedMultiJitter(

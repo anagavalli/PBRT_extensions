@@ -3,6 +3,9 @@
 #pragma once
 #endif
 
+// This class represents an implementation of excercise 7.3 from the PBRT v3 textbook.
+// 7.3: "Implement the improved multi-jittered sampling method introduced by Kensler (2013) as a new Sampler in pbrt."
+//
 // See https://www.pbr-book.org/3ed-2018/Sampling_and_Reconstruction/Exercises for details
 // Paper link: http://eastfarthing.com/publications/cmj.pdf
 
@@ -34,6 +37,7 @@ class MultiJitterSampler : public PixelSampler {
     const int xPixelSamples, yPixelSamples;
     const bool jitterSamples;
 
+    // Finds reasonable n and m such that n*m >= count, for the purposes of creating strata.
     std::vector<int> DecomposeCount(int count);
 
     void CorrelatedMultiJitter(Point2f *samples, int m, int n, int count, RNG &rng);
