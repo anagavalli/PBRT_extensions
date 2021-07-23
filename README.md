@@ -1,3 +1,7 @@
+# pbrt Extensions
+
+Personal extensions made to pbrt for fun + practice. Original pbrt README included below.
+
 pbrt, Version 3
 ===============
 
